@@ -62,6 +62,10 @@ public class PlayerScript : MonoBehaviour {
     public float duration;
 
 
+
+    private GameObject sanityGO = null;
+
+
     
 
 
@@ -122,50 +126,14 @@ public class PlayerScript : MonoBehaviour {
 
     }
 
-    public IEnumerator IntervalTime()
-    
-    {
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-        yield return new WaitForSeconds(0.5f);
-        sanity = sanity - 10;
-
-
-
-
-    }
+   
 
 
 
 
     // Update is called once per frame
 
-    void OnTriggerEnter(Collider sanityTrigger)
-    {
-        if (sanityTrigger.tag == "SanityDepleter")
-
-        {
-
-            StartCoroutine(IntervalTime());           
-        }
-
-     }
+    
     void Update () {
 
         //Assigning sanity left
@@ -333,6 +301,44 @@ public class PlayerScript : MonoBehaviour {
         this.transform.GetChild(1).GetChild(2).transform.GetComponent<TypeScript>().vText = "MOVE.";
         StartCoroutine(this.transform.GetChild(1).GetChild(2).transform.GetComponent<TypeScript>().PlayText());
     }
+
+
+
+
+    //Sanity adjust coroutine
+    public IEnumerator SanityAdjust()
+    {
+    	//Check what mode the sanity trigger wants to be in
+
+    	
+    	//One time
+    	if(sanityGO.transform.GetComponent<SanityTriggerScript>().mode == "onetime")
+    	{
+
+    		float sanityGoal = sanity + sanityGO.transform.GetComponent<SanityTriggerScript>().sanityAdjustment;
+
+    		float startTime = Time.time;
+
+    		float t;
+
+
+    		//Smooth interpolate between the amount of sanity you have now and the amount of sanity the trigger wants you to have
+    		for(int i = 0; i < 120; i++)
+    		{
+    			t = (Time.time - startTime) / 5f;
+    			sanity = Mathf.SmoothStep(sanity, sanityGoal, t);
+    			yield return null;
+    		}
+
+    		yield break;
+    	}
+
+    	//Continuous
+    	if(sanityGO.transform.GetComponent<SanityTriggerScript>().mode == "continuous")
+    	{
+    		yield break;
+    	}
+    }
     
 
 
@@ -434,6 +440,23 @@ public class PlayerScript : MonoBehaviour {
 
 
     }
+
+
+
+
+
+
+
+    //TRIGGERS
+    void OnTriggerEnter(Collider sanityTrigger)
+    {
+        if (sanityTrigger.tag == "SanityAdjust")
+        {
+        	sanityGO = sanityTrigger.gameObject;
+            StartCoroutine(SanityAdjust());           
+        }
+
+     }
 
 
 

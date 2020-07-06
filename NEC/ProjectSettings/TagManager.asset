@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - PostProcessing
-  - SanityDepleter
+  - SanityAdjust
   layers:
   - Default
   - TransparentFX
