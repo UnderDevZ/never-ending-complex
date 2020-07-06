@@ -287,6 +287,8 @@ public class PlayerScript : MonoBehaviour {
 
 
 
+        //Making sure sanity doesn't go below 0
+        if(sanity < 0) sanity = 0;
 
 
 	}
