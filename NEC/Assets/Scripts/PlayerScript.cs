@@ -53,18 +53,27 @@ public class PlayerScript : MonoBehaviour {
     public float sanityO;
 
     public float chunkyWait = 0;
-  
 
-     
+    public float maxSanity = 100;
+    public float minSanity = 0;
+
+    public float time = 5f;
+    public float StartTime;
+    public float duration;
 
 
-  
- 
+    
 
-	
 
-	// Use this for initialization
-	void Start () {
+
+
+
+
+
+    // Use this for initialization
+    void Start () {
+
+        
 
 
         //Postprocessing intialization
@@ -102,8 +111,8 @@ public class PlayerScript : MonoBehaviour {
         initialSanity = 100f;
         sanity = initialSanity;
 
-
-
+        StartTime = Time.time;
+      
        
         
 	}
@@ -113,23 +122,68 @@ public class PlayerScript : MonoBehaviour {
 
     }
 
+    public IEnumerator IntervalTime()
     
-	
-	// Update is called once per frame
-	void Update () {
+    {
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+        yield return new WaitForSeconds(0.5f);
+        sanity = sanity - 10;
+
+
+
+
+    }
+
+
+
+
+    // Update is called once per frame
+
+    void OnTriggerEnter(Collider sanityTrigger)
+    {
+        if (sanityTrigger.tag == "SanityDepleter")
+
+        {
+
+            StartCoroutine(IntervalTime());           
+        }
+
+     }
+    void Update () {
 
         //Assigning sanity left
         sanityO = 100 - sanity;
 
 
-
-
-
+        float t = (Time.time - StartTime) / duration;
         
-        
+       
+
+
+
+
+
+
         //chromaticLayer.intensity = new FloatParameter { value = 100 };
-        
-		CharacterController player = GetComponent<CharacterController>();
+
+        CharacterController player = GetComponent<CharacterController>();
 
 		if(player.isGrounded && canMove == true && isBot == false)
         {
