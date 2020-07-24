@@ -60,7 +60,7 @@ public class PlayerScript : MonoBehaviour {
     public float time = 5f;
     public float StartTime;
     public float duration;
-
+  
 
 
     private GameObject sanityGO = null;
@@ -135,16 +135,17 @@ public class PlayerScript : MonoBehaviour {
 
     
     void Update () {
+        
 
         //Assigning sanity left
         sanityO = 100 - sanity;
 
 
         float t = (Time.time - StartTime) / duration;
+
+
+
         
-       
-
-
 
 
 
