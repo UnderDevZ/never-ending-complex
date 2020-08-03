@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PostProcessing
   - SanityAdjust
+  - CollectibleTag
   layers:
   - Default
   - TransparentFX

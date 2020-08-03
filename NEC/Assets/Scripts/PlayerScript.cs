@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.UI;
 public class PlayerScript : MonoBehaviour {
 
 
@@ -69,7 +70,16 @@ public class PlayerScript : MonoBehaviour {
     
 
 
+    //Collectibles
+    public int collectibleCount = 0;
 
+    private GameObject collectibleLookGO; //The gameobject of the collectible that you last looked at
+    private bool collectibleErrorFix; //Don't touch, simply for fixing an annoying console error
+
+    private GameObject clickGO;
+    private Text itemText;
+
+    private Text collectibleText;
 
 
 
@@ -116,6 +126,12 @@ public class PlayerScript : MonoBehaviour {
         sanity = initialSanity;
 
         StartTime = Time.time;
+
+
+        clickGO = GameObject.Find("ClickText").gameObject;
+        itemText = clickGO.transform.GetChild(0).transform.GetComponent<Text>();
+
+        collectibleText = this.transform.GetChild(1).GetChild(3).GetChild(0).GetComponent<Text>();
       
        
         
@@ -219,6 +235,57 @@ public class PlayerScript : MonoBehaviour {
 
 
 
+        //Sending a raycast from the center of the screen
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+     	RaycastHit hit;
+
+     	//Check if raycast is pointing at collectible
+     	if (Physics.Raycast(ray, out hit, 5f) && hit.transform.tag == "CollectibleTag")
+     	{
+     		collectibleErrorFix = true;
+     		collectibleLookGO = hit.transform.gameObject;
+
+     		//Do things that happen when player is pointing at collectible
+
+
+     		//Make outline appear on item
+     		hit.transform.GetChild(0).GetComponent<Outline>().OutlineWidth = 5f;
+
+            //Move clicktext to where item is and enable it
+            clickGO.SetActive(true);
+            clickGO.transform.position = new Vector3(hit.transform.position.x + 1.3f, hit.transform.position.y + 0.7f, hit.transform.position.z);
+
+            //Make clicktext always face
+            clickGO.transform.LookAt(this.transform);
+
+
+     		//Do things that happen when player clicks to collect it
+     		if(Input.GetButtonDown("Fire1"))
+     		{
+     			//Destroy GO
+                Destroy(hit.transform.gameObject);
+
+                //Make text disable
+                clickGO.SetActive(false);
+
+                collectibleErrorFix = false;
+                collectibleCount++;
+
+                //Update collectibleText
+                collectibleText.text = collectibleCount + " / 50";
+     		}
+     	}
+     	else
+     	{
+     		
+     		//Make outline disappear
+     		if(collectibleErrorFix == true)collectibleLookGO.transform.GetChild(0).GetComponent<Outline>().OutlineWidth = 0f;
+
+            //Make text disable
+            clickGO.SetActive(false);
+     	}
+
+
 
 
 
@@ -230,6 +297,9 @@ public class PlayerScript : MonoBehaviour {
         _Bloom.intensity.value = sanityO / 5f;
         _Lens.intensity.value = sanityO / 1.5f;
         Camera.main.fieldOfView = 60 - sanityO / 4;
+
+        //Minimap EFX
+        this.transform.GetChild(2).GetComponent<ShaderEffect_BleedingColors>().shift = sanityO;
 
         //Pixellation being changed compared to sanity left
         if(sanity > 50) camera.transform.GetComponent<Pixelation>().enabled = false;
